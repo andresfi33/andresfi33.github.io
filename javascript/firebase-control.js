@@ -56,11 +56,35 @@ async function getLogros() {
   querySnapshot.forEach((doc) => {
     const dataTmp = doc.data();
 
-    const logroTmp = new Logro(dataTmp.name, dataTmp.description, dataTmp.img, dataTmp.completed);
+    const logroTmp = new Logro(
+      dataTmp.name,
+      dataTmp.description,
+      dataTmp.img,
+      dataTmp.completed
+    );
     arrAchievements.push(logroTmp);
   });
 
   return arrAchievements;
+}
+
+function mostrarProgressBar(achievementsData) {
+  const countAchievementCompleted = achievementsData.filter(
+    (achievement) => achievement.completed
+  ).length;
+  const countAchievements = achievementsData.length;
+
+  const numAchievementText = document.querySelector("#num-achievements");
+  numAchievementText.textContent =
+    countAchievementCompleted + " de " + countAchievements;
+
+  const progressBar = document.querySelector(
+    "#progress-container .progress-bar"
+  );
+
+  const percentage = (countAchievementCompleted / countAchievements) * 100;
+
+  progressBar.style = "width: " + percentage + "%;";
 }
 
 function mostrarLogros(achievementsData) {
@@ -70,12 +94,10 @@ function mostrarLogros(achievementsData) {
   let achievementUnCompleted = [];
 
   achievementsData.forEach((achievement) => {
-    console.log(achievement);
-    if(achievement.completed)
-    {
-        achievementCompleted.push(achievement);
-    } else{
-        achievementUnCompleted.push(achievement);
+    if (achievement.completed) {
+      achievementCompleted.push(achievement);
+    } else {
+      achievementUnCompleted.push(achievement);
     }
   });
 
@@ -153,4 +175,9 @@ function mostrarLogros(achievementsData) {
 
 const db = firebaseStart();
 const logros = await getLogros();
+
+//Barra de progreso
+mostrarProgressBar(logros);
+
+//Logros
 mostrarLogros(logros);

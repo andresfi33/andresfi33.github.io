@@ -10,7 +10,7 @@ body {
     padding: 5%;
 }
 
-.progress-container {
+#progress-container {
     background-color: rgba(39, 52, 59, 0.5);
     padding: 3%;
     display: flex;
