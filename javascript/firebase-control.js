@@ -89,6 +89,7 @@ function mostrarProgressBar(achievementsData) {
 
 function mostrarLogros(achievementsData) {
   const achievementContainer = document.querySelector("#achievement-list");
+  achievementContainer.innerHTML = "";
 
   let achievementCompleted = [];
   let achievementUnCompleted = [];
@@ -174,10 +175,23 @@ function mostrarLogros(achievementsData) {
 }
 
 const db = firebaseStart();
-const logros = await getLogros();
+let logros = await getLogros();
 
 //Barra de progreso
 mostrarProgressBar(logros);
 
 //Logros
 mostrarLogros(logros);
+
+/*setInterval(async () => {
+  logros = await getLogros();
+
+  //Barra de progreso
+  mostrarProgressBar(logros);
+
+  //Logros
+  mostrarLogros(logros);
+
+  console.log("Datos actualizados 🐱‍👤 " + new Date());
+}, 3000);
+*/
