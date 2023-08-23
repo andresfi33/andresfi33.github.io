@@ -7,9 +7,20 @@ import {
   addDoc,
   query,
   collection,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js";
 
 class Logro {
+  constructor(name, description, img, completed, id) {
+    this.name = name;
+    this.description = description;
+    this.img = img;
+    this.completed = completed;
+    this.id = id;
+  }
+}
+
+class LogroMod {
   constructor(name, description, img, completed) {
     this.name = name;
     this.description = description;
@@ -34,17 +45,30 @@ function firebaseStart() {
   return getFirestore(app);
 }
 
-async function newLogro(
-  name,
-  description,
-  img = "https://qph.cf2.quoracdn.net/main-qimg-8b9d64dd7a997f9c55116b167429a478",
-  completed = false
-) {
-  const logroTmp = new Logro(name, description, img, completed);
-
-  const docRef = await addDoc(collection(db, "achievements"), {
-    ...logroTmp,
+function completarLogro(idMod) {
+  const docRef = updateDoc(doc(db, "achievements", idMod), {
+    completed: true,
   });
+
+  // Esperar 3 segundos y luego recargar la página
+  setTimeout(() => {
+    location.reload();
+  }, 500);
+
+  return 0;
+}
+
+function logroNano() {
+  // Obtener la hora actual
+  const horaActual = new Date();
+
+  // Obtener los minutos de la hora actual
+  const minutos = horaActual.getMinutes();
+
+  if(minutos == 26)
+  {
+    completarLogro("exb1cbwB5fwWuFxYarrb");
+  }
 }
 
 async function getLogros() {
@@ -60,7 +84,8 @@ async function getLogros() {
       dataTmp.name,
       dataTmp.description,
       dataTmp.img,
-      dataTmp.completed
+      dataTmp.completed,
+      doc.id
     );
     arrAchievements.push(logroTmp);
   });
@@ -143,6 +168,11 @@ function mostrarLogros(achievementsData) {
   achievementUnCompleted.forEach((achievement) => {
     const div = document.createElement("div");
     div.classList.add("achievement");
+    if (achievement.id == "exb1cbwB5fwWuFxYarrb") {
+      div.addEventListener("click", () => {
+        logroNano();
+      });
+    }
 
     const icon = document.createElement("img");
     icon.classList.add("achievement-icon");
