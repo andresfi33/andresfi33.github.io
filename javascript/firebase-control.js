@@ -7,7 +7,7 @@ import {
   addDoc,
   query,
   collection,
-  updateDoc
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js";
 
 class Logro {
@@ -65,9 +65,19 @@ function logroNano() {
   // Obtener los minutos de la hora actual
   const minutos = horaActual.getMinutes();
 
-  if(minutos == 26)
-  {
+  if (minutos == 26) {
     completarLogro("exb1cbwB5fwWuFxYarrb");
+  }
+}
+
+function logrosCompletados(achievementsData) {
+  //Comprobar que estén todos los logros completados
+  const countAchievements = achievementsData.length;
+  const countAchievementCompleted = achievementsData.filter(
+    (achievement) => achievement.completed
+  ).length;
+
+  if (countAchievementCompleted == countAchievements) {
   }
 }
 
@@ -110,6 +120,27 @@ function mostrarProgressBar(achievementsData) {
   const percentage = (countAchievementCompleted / countAchievements) * 100;
 
   progressBar.style = "width: " + percentage + "%;";
+
+  if (percentage == 100) {
+    const textoLogros = document.querySelector(
+      "#progress-container div #textoLogros"
+    );
+
+    const progressContainer = document.querySelector("#progress-container");
+    const icon = document.querySelector(".achievement-icon");
+
+    const detalleLogros = document.querySelector("#detalleLogros");
+    detalleLogros.classList.add("achievement-details");
+
+   // progressContainer.appendChild(icon);
+
+    textoLogros.innerHTML = "¡HAS DESBLOQUEADO TODOS LOS LOGROS! ";
+    textoLogros.classList.add("achievement-description");
+
+    //Quitamos el flex-direction para que la imagen salga a la izquierda
+    progressContainer.style.flexDirection = "row";
+    icon.style.display = "block";
+  }
 }
 
 function mostrarLogros(achievementsData) {
@@ -212,6 +243,9 @@ mostrarProgressBar(logros);
 
 //Logros
 mostrarLogros(logros);
+
+//Mostrar emblema si logros completados
+logrosCompletados(logros);
 
 /*setInterval(async () => {
   logros = await getLogros();
