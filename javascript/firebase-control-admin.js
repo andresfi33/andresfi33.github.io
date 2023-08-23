@@ -56,6 +56,13 @@ async function newLogro(
   const docRef = await addDoc(collection(db, "achievements"), {
     ...logroTmp,
   });
+
+  // Esperar 3 segundos y luego recargar la página
+  setTimeout(() => {
+    location.reload();
+  }, 500);
+
+  return 0;
 }
 
 async function getLogros() {
