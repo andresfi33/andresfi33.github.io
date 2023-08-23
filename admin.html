@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logros</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+      crossorigin="anonymous"
+    />
+
+    <link href="styles/admin.css" rel="stylesheet" />
+    <script type="module" src="javascript/firebase-control-admin.js"></script>
+  </head>
+
+  <body>
+    <h1>Cumpleaños Gonzalo 2023</h1>
+
+    <h2>Modificación de Logros</h2>
+
+    <label id="id-logro">Id del logro a modificar: </label>
+
+    <label>Nombre:</label>
+    <input type="text" id="nombre-logro" placeholder="Ingrese el nombre del logro" /><br />
+
+    <label>Descripción:</label>
+    <input
+      type="text"
+      id="descripcion-logro"
+      placeholder="Ingrese la descripción"
+    />
+
+    <label>
+    <input type="radio" name="opciones" value="completed" id="completed"> Completado
+  </label>
+  <label>
+    <input type="radio" name="opciones" value="uncompleted" id="uncompleted"> Sin completar
+  </label>
+
+    <button id="btn-agregar-logro">Añadir Logro</button>
+    <button id="btn-modificar-logro">Modificar Logro</button>
+
+    <h2>Información de Logros</h2>
+
+    <div id="achievement-list" />
+
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

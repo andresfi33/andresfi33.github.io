@@ -7,9 +7,20 @@ import {
   addDoc,
   query,
   collection,
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js";
 
 class Logro {
+  constructor(name, description, img, completed, id) {
+    this.name = name;
+    this.description = description;
+    this.img = img;
+    this.completed = completed;
+    this.id = id;
+  }
+}
+
+class LogroAlta {
   constructor(name, description, img, completed) {
     this.name = name;
     this.description = description;
@@ -40,7 +51,7 @@ async function newLogro(
   img = "https://qph.cf2.quoracdn.net/main-qimg-8b9d64dd7a997f9c55116b167429a478",
   completed = false
 ) {
-  const logroTmp = new Logro(name, description, img, completed);
+  const logroTmp = new LogroAlta(name, description, img, completed);
 
   const docRef = await addDoc(collection(db, "achievements"), {
     ...logroTmp,
@@ -60,7 +71,8 @@ async function getLogros() {
       dataTmp.name,
       dataTmp.description,
       dataTmp.img,
-      dataTmp.completed
+      dataTmp.completed,
+      doc.id
     );
     arrAchievements.push(logroTmp);
   });
@@ -68,23 +80,46 @@ async function getLogros() {
   return arrAchievements;
 }
 
-function mostrarProgressBar(achievementsData) {
-  const countAchievementCompleted = achievementsData.filter(
-    (achievement) => achievement.completed
-  ).length;
-  const countAchievements = achievementsData.length;
+function informarDatosMod(id, name, description, completed) {
+  document.getElementById("id-logro").innerHTML = id;
+  document.getElementById("nombre-logro").value = name;
+  document.getElementById("descripcion-logro").value = description;
+  const opciones = document.getElementsByName("opciones");
+  if (completed) {
+    document.getElementById("completed").checked = true;
+  } else {
+    document.getElementById("uncompleted").checked = true;
+  }
+}
 
-  const numAchievementText = document.querySelector("#num-achievements");
-  numAchievementText.textContent =
-    countAchievementCompleted + " de " + countAchievements;
+function updateLogro() {
+  let idMod = document.getElementById("id-logro").innerHTML;
+  let nameMod = document.getElementById("nombre-logro").value;
+  let descriptionMod = document.getElementById("descripcion-logro").value;
 
-  const progressBar = document.querySelector(
-    "#progress-container .progress-bar"
-  );
+  const opciones = document.getElementsByName("opciones");
+  let completed = null;
 
-  const percentage = (countAchievementCompleted / countAchievements) * 100;
+  for (const opcion of opciones) {
+    if (opcion.checked) {
+      if (opcion.value == "completed") {
+        completed = true;
+      } else {
+        completed = false;
+      }
+      break;
+    }
+  }
 
-  progressBar.style = "width: " + percentage + "%;";
+  const logroTmp = new LogroAlta(nameMod, descriptionMod, "", completed);
+
+  const docRef = updateDoc(doc(db, "achievements", idMod), {
+    name: logroTmp.name,
+    description: logroTmp.description,
+    completed: completed,
+  });
+
+  return 0;
 }
 
 function mostrarLogros(achievementsData) {
@@ -105,6 +140,14 @@ function mostrarLogros(achievementsData) {
   achievementCompleted.forEach((achievement) => {
     const div = document.createElement("div");
     div.classList.add("achievement");
+    div.addEventListener("click", () => {
+      informarDatosMod(
+        achievement.id,
+        achievement.name,
+        achievement.description,
+        achievement.completed
+      );
+    });
 
     const icon = document.createElement("img");
     icon.classList.add("achievement-icon");
@@ -122,6 +165,11 @@ function mostrarLogros(achievementsData) {
     const description = document.createElement("p");
     description.classList.add("achievement-description");
     description.textContent = achievement.description;
+
+    //Se añade oculto el id de Firebase para poder actualizar los logros
+    const idFirebase = document.createElement("p");
+    idFirebase.classList.add("firebase-id");
+    idFirebase.textContent = achievement.id;
 
     details.appendChild(title);
     details.appendChild(description);
@@ -143,6 +191,14 @@ function mostrarLogros(achievementsData) {
   achievementUnCompleted.forEach((achievement) => {
     const div = document.createElement("div");
     div.classList.add("achievement");
+    div.addEventListener("click", () => {
+      informarDatosMod(
+        achievement.id,
+        achievement.name,
+        achievement.description,
+        achievement.completed
+      );
+    });
 
     const icon = document.createElement("img");
     icon.classList.add("achievement-icon");
@@ -162,8 +218,14 @@ function mostrarLogros(achievementsData) {
     description.classList.add("achievement-description");
     description.textContent = achievement.description;
 
+    //Se añade oculto el id de Firebase para poder actualizar los logros
+    const idFirebase = document.createElement("p");
+    idFirebase.classList.add("achievement-id");
+    idFirebase.textContent = achievement.id;
+
     details.appendChild(title);
     details.appendChild(description);
+    details.appendChild(idFirebase);
 
     div.appendChild(icon);
     div.appendChild(details);
@@ -177,23 +239,24 @@ function mostrarLogros(achievementsData) {
 const db = firebaseStart();
 let logros = await getLogros();
 
-//Barra de progreso
-mostrarProgressBar(logros);
-
 //Logros
 mostrarLogros(logros);
 
-/*setInterval(async () => {
-  logros = await getLogros();
+//Añadir evento onclick al botón de Alta
+const agregarLogro = document.getElementById("btn-agregar-logro");
 
-  //Barra de progreso
-  mostrarProgressBar(logros);
+// Agregar eventListener al botón
+agregarLogro.addEventListener("click", () => {
+  const nombreLogro = document.getElementById("nombre-logro").value;
+  const descLogro = document.getElementById("descripcion-logro").value;
 
-  //Logros
-  mostrarLogros(logros);
+  newLogro(nombreLogro, descLogro);
+});
 
-  console.log("Datos actualizados 🐱‍👤 " + new Date());
-}, 3000);
-*/
+//Añadir evento onclick al botón de Modificar
+const modificarLogro = document.getElementById("btn-modificar-logro");
 
-//newLogro("nombre","desc");
+// Agregar eventListener al botón
+modificarLogro.addEventListener("click", () => {
+  updateLogro();
+});
