@@ -119,6 +119,11 @@ function updateLogro() {
     completed: completed,
   });
 
+  // Esperar 3 segundos y luego recargar la página
+  setTimeout(() => {
+    location.reload();
+  }, 500);
+
   return 0;
 }
 
